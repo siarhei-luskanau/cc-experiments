@@ -311,14 +311,14 @@ volumes:
 
 ## Implementation Phases
 
-### Phase 1 — Backend Foundation
-- [ ] Gradle root project + `backend` and `shared-dto` modules
-- [ ] Docker Compose with PostgreSQL
-- [ ] Flyway migration: `users` + `reading_sessions` tables
-- [ ] `UserController` + `UserService` + `UserRepository`
-- [ ] `SessionController` + `SessionService` (start/end logic, one-active constraint)
-- [ ] `LeaderboardController` + `LeaderboardService` (4 time windows)
-- [ ] Integration tests (Testcontainers + PostgreSQL)
+### Phase 1 — Backend Foundation ✓
+- [x] Gradle root project + `backend` and `shared-dto` modules
+- [x] Docker Compose with PostgreSQL
+- [x] Flyway migration: `users` + `reading_sessions` tables
+- [x] `UserController` + `UserService` + `UserRepository`
+- [x] `SessionController` + `SessionService` (start/end logic, one-active constraint)
+- [x] `LeaderboardController` + `LeaderboardService` (4 time windows)
+- [x] Integration tests (Testcontainers + PostgreSQL)
 
 ### Phase 2 — Real-time Broadcast
 - [ ] Spring WebSocket configuration (raw WS endpoint `/ws/leaderboard`)
