@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param
 import java.time.Instant
 
 interface LeaderboardRepository : Repository<ReadingSession, Long> {
-
     @Query(
         value = """
             SELECT u.username AS username,
@@ -19,9 +18,11 @@ interface LeaderboardRepository : Repository<ReadingSession, Long> {
             GROUP BY u.id, u.username
             ORDER BY total_sec DESC
         """,
-        nativeQuery = true
+        nativeQuery = true,
     )
-    fun findLeaderboard(@Param("windowStart") windowStart: Instant): List<LeaderboardRow>
+    fun findLeaderboard(
+        @Param("windowStart") windowStart: Instant,
+    ): List<LeaderboardRow>
 }
 
 interface LeaderboardRow {

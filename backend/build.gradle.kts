@@ -10,7 +10,12 @@ group = "com.bookreads"
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(libs.versions.javaVersion.get().toInt())
+        languageVersion =
+            JavaLanguageVersion.of(
+                libs.versions.javaVersion
+                    .get()
+                    .toInt(),
+            )
     }
 }
 

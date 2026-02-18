@@ -7,11 +7,11 @@ data class LeaderboardEntryDto(
     val rank: Int,
     val username: String,
     val totalSec: Long,
-    val sessionCount: Int
+    val sessionCount: Int,
 )
 
 @Serializable
 data class LeaderboardUpdateMessage(
     val window: String,
-    val entries: List<LeaderboardEntryDto>
+    val entries: List<LeaderboardEntryDto>,
 )

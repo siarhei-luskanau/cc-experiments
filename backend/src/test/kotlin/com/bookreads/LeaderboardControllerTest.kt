@@ -11,13 +11,21 @@ import org.springframework.http.HttpStatus
 import java.util.UUID
 
 class LeaderboardControllerTest : BaseIntegrationTest() {
-
     @Autowired
     lateinit var restTemplate: TestRestTemplate
 
-    data class CreateUserRequest(val username: String)
-    data class StartSessionRequest(val username: String, val bookTitle: String)
-    data class EndSessionRequest(val username: String)
+    data class CreateUserRequest(
+        val username: String,
+    )
+
+    data class StartSessionRequest(
+        val username: String,
+        val bookTitle: String,
+    )
+
+    data class EndSessionRequest(
+        val username: String,
+    )
 
     private fun createUser(username: String): UserDto =
         restTemplate.postForEntity("/api/v1/users", CreateUserRequest(username), UserDto::class.java).body!!
@@ -58,11 +66,19 @@ class LeaderboardControllerTest : BaseIntegrationTest() {
     fun `user with completed session appears on leaderboard`() {
         val username = uniqueUser()
         createUser(username)
-        restTemplate.postForEntity("/api/v1/sessions/start", StartSessionRequest(username, "Dune"), SessionDto::class.java)
+        restTemplate.postForEntity(
+            "/api/v1/sessions/start",
+            StartSessionRequest(username, "Dune"),
+            SessionDto::class.java,
+        )
         Thread.sleep(1100)
         restTemplate.postForEntity("/api/v1/sessions/end", EndSessionRequest(username), SessionDto::class.java)
 
-        val response = restTemplate.getForEntity("/api/v1/leaderboard?window=alltime", Array<LeaderboardEntryDto>::class.java)
+        val response =
+            restTemplate.getForEntity(
+                "/api/v1/leaderboard?window=alltime",
+                Array<LeaderboardEntryDto>::class.java,
+            )
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         val entry = response.body?.find { it.username == username }
         assertThat(entry).isNotNull

@@ -9,5 +9,5 @@ data class SessionDto(
     val bookTitle: String,
     val startedAt: String,
     val endedAt: String?,
-    val durationSec: Long?
+    val durationSec: Long?,
 )

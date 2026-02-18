@@ -8,19 +8,21 @@ import org.springframework.boot.test.web.client.TestRestTemplate
 import org.springframework.http.HttpStatus
 
 class UserControllerTest : BaseIntegrationTest() {
-
     @Autowired
     lateinit var restTemplate: TestRestTemplate
 
-    data class CreateUserRequest(val username: String)
+    data class CreateUserRequest(
+        val username: String,
+    )
 
     @Test
     fun `create user returns 200 with username`() {
-        val response = restTemplate.postForEntity(
-            "/api/v1/users",
-            CreateUserRequest("alice"),
-            UserDto::class.java
-        )
+        val response =
+            restTemplate.postForEntity(
+                "/api/v1/users",
+                CreateUserRequest("alice"),
+                UserDto::class.java,
+            )
         assertThat(response.statusCode).isEqualTo(HttpStatus.OK)
         assertThat(response.body?.username).isEqualTo("alice")
     }

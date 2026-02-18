@@ -10,13 +10,17 @@ import java.time.Instant
 class SessionService(
     private val sessionRepository: SessionRepository,
     private val userRepository: UserRepository,
-    private val entityManager: jakarta.persistence.EntityManager
+    private val entityManager: jakarta.persistence.EntityManager,
 ) {
-
     @Transactional
-    fun startSession(username: String, bookTitle: String): SessionDto {
-        val user = userRepository.findByUsername(username)
-            .orElseThrow { NoSuchElementException("User not found: $username") }
+    fun startSession(
+        username: String,
+        bookTitle: String,
+    ): SessionDto {
+        val user =
+            userRepository
+                .findByUsername(username)
+                .orElseThrow { NoSuchElementException("User not found: $username") }
         sessionRepository.findByUserIdAndEndedAtIsNull(user.id).ifPresent {
             throw IllegalStateException("User $username already has an active session")
         }
@@ -28,10 +32,14 @@ class SessionService(
 
     @Transactional
     fun endSession(username: String): SessionDto {
-        val user = userRepository.findByUsername(username)
-            .orElseThrow { NoSuchElementException("User not found: $username") }
-        val session = sessionRepository.findByUserIdAndEndedAtIsNull(user.id)
-            .orElseThrow { NoSuchElementException("No active session for user: $username") }
+        val user =
+            userRepository
+                .findByUsername(username)
+                .orElseThrow { NoSuchElementException("User not found: $username") }
+        val session =
+            sessionRepository
+                .findByUserIdAndEndedAtIsNull(user.id)
+                .orElseThrow { NoSuchElementException("No active session for user: $username") }
         session.endedAt = Instant.now()
         sessionRepository.save(session)
         sessionRepository.flush()
@@ -41,18 +49,23 @@ class SessionService(
 
     @Transactional(readOnly = true)
     fun getActiveSession(username: String): SessionDto? {
-        val user = userRepository.findByUsername(username)
-            .orElseThrow { NoSuchElementException("User not found: $username") }
-        return sessionRepository.findByUserIdAndEndedAtIsNull(user.id)
-            .map { it.toDto() }.orElse(null)
+        val user =
+            userRepository
+                .findByUsername(username)
+                .orElseThrow { NoSuchElementException("User not found: $username") }
+        return sessionRepository
+            .findByUserIdAndEndedAtIsNull(user.id)
+            .map { it.toDto() }
+            .orElse(null)
     }
 
-    private fun ReadingSession.toDto() = SessionDto(
-        id = id,
-        username = user.username,
-        bookTitle = bookTitle,
-        startedAt = startedAt.toString(),
-        endedAt = endedAt?.toString(),
-        durationSec = durationSec
-    )
+    private fun ReadingSession.toDto() =
+        SessionDto(
+            id = id,
+            username = user.username,
+            bookTitle = bookTitle,
+            startedAt = startedAt.toString(),
+            endedAt = endedAt?.toString(),
+            durationSec = durationSec,
+        )
 }

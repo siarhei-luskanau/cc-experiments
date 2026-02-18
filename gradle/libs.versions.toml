@@ -2,11 +2,13 @@
 javaVersion = "21"
 kotlin = "2.1.0"
 kotlinx-serialization = "1.7.3"
+ktlint = "1.8.0"
 spring-boot = "3.3.5"
 spring-dependency-management = "1.1.6"
 
 [libraries]
 kotlinx-serialization-json = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+ktlint-cli = { module = "com.pinterest.ktlint:ktlint-cli", version.ref = "ktlint" }
 
 [plugins]
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
