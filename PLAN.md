@@ -18,7 +18,7 @@ A real-time leaderboard application that tracks how much time users spend readin
 | Backend role | Sync & leaderboard storage only |
 | Leaderboard scope | Global |
 | Leaderboard windows | Daily / Weekly / Monthly / All-time |
-| Real-time updates | WebSocket (SSE fallback) |
+| Leaderboard refresh | REST polling (on tab focus + periodic) |
 | Backend framework | Spring Boot (Kotlin) |
 | Database | PostgreSQL |
 | Deployment | Docker Compose (local / self-hosted) |
@@ -37,7 +37,7 @@ A real-time leaderboard application that tracks how much time users spend readin
 │  ┌────────────────────────────────────────────────┐  │
 │  │           commonMain (shared)                  │  │
 │  │  Compose UI · ViewModels · Domain · Ktor HTTP  │  │
-│  │  WebSocket client · Serialization              │  │
+│  │  Serialization                                 │  │
 │  │                                                │  │
 │  │  ┌──────────────────────────────────────────┐  │  │
 │  │  │         Session Engine (client-owned)    │  │  │
@@ -46,12 +46,12 @@ A real-time leaderboard application that tracks how much time users spend readin
 │  │  └──────────────────────────────────────────┘  │  │
 │  └────────────────────────────────────────────────┘  │
 └──────────────────────┬──────────────────────────────┘
-                       │ HTTP REST (sync) + WebSocket (leaderboard)
+                       │ HTTP REST
 ┌──────────────────────▼──────────────────────────────┐
 │           Spring Boot Backend (Kotlin)               │
 │                                                      │
-│  Session sync (upsert) · WebSocket broadcast         │
-│  Leaderboard queries · No session lifecycle logic    │
+│  Session sync (upsert) · Leaderboard queries         │
+│  No session lifecycle logic                          │
 │                                                      │
 └──────────────────────┬──────────────────────────────┘
                        │ JDBC
@@ -81,10 +81,8 @@ book-leaderboard/
 │           │   └── SessionRepository.kt
 │           ├── leaderboard/
 │           │   ├── LeaderboardController.kt
-│           │   ├── LeaderboardService.kt
-│           │   └── LeaderboardWebSocketHandler.kt
+│           │   └── LeaderboardService.kt
 │           └── config/
-│               ├── WebSocketConfig.kt
 │               └── SecurityConfig.kt
 │
 ├── client/                           # KMP Gradle module
@@ -92,8 +90,7 @@ book-leaderboard/
 │   └── src/
 │       ├── commonMain/kotlin/
 │       │   ├── api/
-│       │   │   ├── BookApi.kt        # Ktor HTTP client
-│       │   │   └── LeaderboardWs.kt  # WebSocket client
+│       │   │   └── BookApi.kt        # Ktor HTTP client
 │       │   ├── model/
 │       │   │   ├── User.kt
 │       │   │   ├── Session.kt
@@ -139,7 +136,6 @@ book-leaderboard/
 |---|---|
 | Language | Kotlin 2.x |
 | Framework | Spring Boot 3.x |
-| WebSocket | Spring WebSocket (STOMP over SockJS or raw WS) |
 | DB access | Spring Data JPA + Hibernate |
 | Connection pool | HikariCP |
 | Migrations | Flyway |
@@ -152,7 +148,6 @@ book-leaderboard/
 | Language | Kotlin 2.x Multiplatform |
 | UI | Compose Multiplatform |
 | HTTP | Ktor Client (CIO engine on JVM/WasmJS, Darwin on iOS) |
-| WebSocket | Ktor WebSocket plugin |
 | Serialization | kotlinx.serialization |
 | Async | Kotlin Coroutines + Flow |
 | DI | Koin Multiplatform |
@@ -221,13 +216,6 @@ Base path: `/api/v1`
 |---|---|---|---|---|
 | `GET` | `/leaderboard` | `window=daily\|weekly\|monthly\|alltime` | `List<LeaderboardEntryDto>` | Ranked list of users by total reading seconds |
 
-### WebSocket
-
-- **Endpoint**: `ws://host/ws/leaderboard`
-- On connect: server pushes current leaderboard snapshot for all windows.
-- On any session start/end: server broadcasts updated leaderboard to all connected clients.
-- Message format: `LeaderboardUpdateMessage` (JSON, kotlinx.serialization).
-
 ---
 
 ## DTO Definitions (`shared-dto`)
@@ -265,11 +253,6 @@ data class LeaderboardEntryDto(
     val sessionCount: Int
 )
 
-@Serializable
-data class LeaderboardUpdateMessage(
-    val window: String,          // "daily" | "weekly" | "monthly" | "alltime"
-    val entries: List<LeaderboardEntryDto>
-)
 ```
 
 ---
@@ -292,7 +275,7 @@ data class LeaderboardUpdateMessage(
 ### 3. Leaderboard Screen
 - Tab bar: Daily / Weekly / Monthly / All-time
 - Ranked list: `#rank · username · Xh Ym` (formatted from totalSec)
-- Live update via WebSocket — no manual refresh needed
+- Auto-refresh via REST polling (on tab focus and every 30 s while visible)
 - Highlight current user's row
 
 ---
@@ -340,37 +323,30 @@ volumes:
 - [ ] `LeaderboardController` + `LeaderboardService` (4 time windows, `SUM(duration_sec)`)
 - [ ] Integration tests (Testcontainers + PostgreSQL)
 
-### Phase 2 — Real-time Broadcast
-- [ ] Spring WebSocket configuration (raw WS endpoint `/ws/leaderboard`)
-- [ ] `LeaderboardWebSocketHandler`: maintain connected sessions, push on session change
-- [ ] Unit tests for broadcast logic
-
-### Phase 3 — KMP Client Scaffold
+### Phase 2 — KMP Client Scaffold
 - [ ] `client` module with all 4 targets (android, iosArm64/iosX64, jvm, wasmJs)
 - [ ] Ktor HTTP client wired to backend
-- [ ] Ktor WebSocket client with reconnection logic
 - [ ] `expect/actual` local storage interface (SharedPreferences / NSUserDefaults / Preferences / localStorage)
 - [ ] `LocalSessionStore` — persists active session state (clientId, bookTitle, startedAt epoch, elapsed offset) across app restarts
 - [ ] `SessionSyncService` — fires `POST /sessions/sync`; retries on failure; schedules periodic 30 s sync while active
 - [ ] `UserRepository`, `SessionRepository` (client-side), `LeaderboardRepository` (client-side)
 - [ ] Koin modules
 
-### Phase 4 — Compose Multiplatform UI
+### Phase 3 — Compose Multiplatform UI
 - [ ] `HomeScreen` with username entry
 - [ ] `SessionScreen`: device-local timer via `LaunchedEffect` coroutine ticking every second; start generates clientId + fires first sync; stop fires final sync; timer survives recomposition via `StateFlow`
-- [ ] `LeaderboardScreen` with 4-tab view and live WebSocket updates
+- [ ] `LeaderboardScreen` with 4-tab view; polls `GET /leaderboard` on tab focus and every 30 s while visible
 - [ ] Navigation between screens
 
-### Phase 5 — Platform Entry Points
+### Phase 4 — Platform Entry Points
 - [ ] Android `MainActivity`
 - [ ] iOS `MainViewController` + Xcode project skeleton
 - [ ] JVM Desktop `main()` with `singleWindowApplication`
 - [ ] WasmJS `main()` with `CanvasBasedWindow`
 
-### Phase 6 — Polish & Packaging
+### Phase 5 — Polish & Packaging
 - [ ] Dockerfile for backend (`./gradlew bootJar` → slim JRE image)
-- [ ] Error handling: duplicate username, server unreachable (sync queued locally), WebSocket disconnect
-- [ ] Offline indicator in client when WebSocket disconnects
+- [ ] Error handling: duplicate username, server unreachable (sync queued locally)
 - [ ] Sync retry queue: if `POST /sessions/sync` fails, store pending sync in local storage and retry on next connectivity event
 - [ ] README with setup and run instructions
 
@@ -388,7 +364,7 @@ volumes:
 
 **Leaderboard computation** — computed on read (`SUM(duration_sec)` with `WHERE started_at >= windowStart`), not materialized. Active sessions contribute their last-synced `duration_sec`, so the leaderboard is accurate to within the sync interval.
 
-**WebSocket broadcast strategy** — the backend maintains a `CopyOnWriteArraySet<WebSocketSession>`. On any successful sync upsert, the leaderboard service recomputes all 4 windows and broadcasts `LeaderboardUpdateMessage` for each window to all connected clients.
+**Leaderboard polling** — the client polls `GET /leaderboard` when the leaderboard tab becomes visible and every 30 s while it remains on screen. No persistent connection is required; results are accurate to within the polling interval (same as the session sync interval).
 
 **Username as identity** — username is stored in a Kotlin `StateFlow` in the client ViewModel and persisted to platform-specific local storage (`SharedPreferences` on Android, `NSUserDefaults` on iOS, `Preferences` on JVM, `localStorage` on WasmJS) via a thin `expect/actual` interface.
 
