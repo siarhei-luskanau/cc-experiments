@@ -1,0 +1,61 @@
+name: Backend CI
+
+env:
+  JAVA_VERSION: '21'
+  JAVA_DISTRIBUTION: 'temurin'
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - backend/**
+      - shared-dto/**
+      - gradle/**
+      - '*.gradle.kts'
+      - gradle.properties
+      - .github/workflows/backend.yml
+  pull_request:
+    branches:
+      - main
+    paths:
+      - backend/**
+      - shared-dto/**
+      - gradle/**
+      - '*.gradle.kts'
+      - gradle.properties
+      - .github/workflows/backend.yml
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+      - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+      - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4
+      - name: Build
+        run: ./gradlew :shared-dto:build :backend:build -x test
+      - name: Test
+        run: ./gradlew :backend:test
+
+  Lint:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@34e114876b0b11c390a56381ad16ebd13914f8d5 # v4
+        with:
+          ref: ${{ github.head_ref }}
+      - uses: actions/setup-java@c1e323688fd81a25caa38c78aa6df2d33d3e20d9 # v4
+        with:
+          java-version: ${{ env.JAVA_VERSION }}
+          distribution: ${{ env.JAVA_DISTRIBUTION }}
+      - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4
+      - run: ./gradlew ktlintFormat --stacktrace
+      - uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
+        with:
+          commit_message: Ktlint format
+      - run: ./gradlew ktlintCheck --stacktrace
