@@ -137,8 +137,6 @@ book-leaderboard/
 | Language | Kotlin 2.x |
 | Framework | Spring Boot 3.x |
 | DB access | Spring Data JPA + Hibernate |
-| Connection pool | HikariCP |
-| Migrations | Flyway |
 | Build | Gradle (Kotlin DSL) |
 | Runtime | JVM 21 (virtual threads) |
 
@@ -165,8 +163,6 @@ book-leaderboard/
 ## Database Schema
 
 ```sql
--- V1__init.sql (Flyway migration)
-
 CREATE TABLE users (
     id         BIGSERIAL PRIMARY KEY,
     username   TEXT NOT NULL UNIQUE,
@@ -317,7 +313,7 @@ volumes:
 ### Phase 1 — Backend Foundation
 - [ ] Gradle root project + `backend` and `shared-dto` modules
 - [ ] Docker Compose with PostgreSQL
-- [ ] Flyway migration: `users` + `reading_sessions` tables (with `client_id` unique column)
+- [ ] SQL init script: `users` + `reading_sessions` tables (with `client_id` unique column), mounted into the PostgreSQL container
 - [ ] `UserController` + `UserService` + `UserRepository`
 - [ ] `SessionController` + `SessionService` (`POST /sessions/sync` upsert on `client_id`, `GET /sessions/{clientId}`)
 - [ ] `LeaderboardController` + `LeaderboardService` (4 time windows, `SUM(duration_sec)`)
