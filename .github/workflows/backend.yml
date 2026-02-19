@@ -55,7 +55,7 @@ jobs:
           distribution: ${{ env.JAVA_DISTRIBUTION }}
       - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a # v4
       - run: ./gradlew ktlintFormat --stacktrace
-      - uses: stefanzweifel/git-auto-commit-action@b863ae1933cb653a53c021fe36dbb774e1fb9403 # v5
+      - uses: stefanzweifel/git-auto-commit-action@04702edda442b2e678b25b537cec683a1493fcb9 # v7.1.0
         with:
           commit_message: Ktlint format
       - run: ./gradlew ktlintCheck --stacktrace
