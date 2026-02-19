@@ -3,7 +3,7 @@ javaVersion = "21"
 kotlin = "2.3.10"
 kotlinx-serialization = "1.7.3"
 ktlint = "1.8.0"
-spring-boot = "3.3.5"
+spring-boot = "4.0.2"
 spring-dependency-management = "1.1.6"
 
 [libraries]
