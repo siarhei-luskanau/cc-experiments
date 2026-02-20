@@ -310,14 +310,14 @@ volumes:
 
 ## Implementation Phases
 
-### Phase 1 — Backend Foundation
-- [ ] Gradle root project + `backend` and `shared-dto` modules
-- [ ] Docker Compose with PostgreSQL
-- [ ] SQL init script: `users` + `reading_sessions` tables (with `client_id` unique column), mounted into the PostgreSQL container
-- [ ] `UserController` + `UserService` + `UserRepository`
-- [ ] `SessionController` + `SessionService` (`POST /sessions/sync` upsert on `client_id`, `GET /sessions/{clientId}`)
-- [ ] `LeaderboardController` + `LeaderboardService` (4 time windows, `SUM(duration_sec)`)
-- [ ] Integration tests (Testcontainers + PostgreSQL)
+### Phase 1 — Backend Foundation ✓
+- [x] Gradle root project + `backend` and `shared-dto` modules
+- [x] Docker Compose with PostgreSQL
+- [x] SQL init script: `users` + `reading_sessions` tables (with `client_id` unique column), mounted into the PostgreSQL container
+- [x] `UserController` + `UserService` + `UserRepository`
+- [x] `SessionController` + `SessionService` (`POST /sessions/sync` upsert on `client_id`, `GET /sessions/{clientId}`)
+- [x] `LeaderboardController` + `LeaderboardService` (4 time windows, `SUM(duration_sec)`)
+- [x] Integration tests (Testcontainers + PostgreSQL)
 
 ### Phase 2 — KMP Client Scaffold
 - [ ] `client` module with all 4 targets (android, iosArm64/iosX64, jvm, wasmJs)

@@ -1,1 +1,31 @@
 rootProject.name = "book-leaderboard"
+include("shared-dto", "backend")
+
+pluginManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+                includeGroupByRegex("android.*")
+            }
+        }
+        gradlePluginPortal()
+        mavenCentral()
+    }
+}
+
+dependencyResolutionManagement {
+    repositories {
+        google {
+            content {
+                includeGroupByRegex("com\\.android.*")
+                includeGroupByRegex("com\\.google.*")
+                includeGroupByRegex("androidx.*")
+                includeGroupByRegex("android.*")
+            }
+        }
+        mavenCentral()
+    }
+}

@@ -1,0 +1,20 @@
+spring:
+  application:
+    name: bookreads-backend
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://localhost:5432/bookreads}
+    username: ${SPRING_DATASOURCE_USERNAME:bookreads}
+    password: ${SPRING_DATASOURCE_PASSWORD:bookreads}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    open-in-view: false
+  flyway:
+    locations: classpath:db/migration
+  threads:
+    virtual:
+      enabled: true
+
+server:
+  port: 8080
