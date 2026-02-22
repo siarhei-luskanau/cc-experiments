@@ -8,22 +8,22 @@ A real-time leaderboard application that tracks how much time users spend readin
 
 ## Requirements Summary
 
-| Dimension | Decision |
-|---|---|
-| Leaderboard metric | Total cumulative reading time |
-| Identity | Username only — no auth, no passwords |
-| Book entry | Free-text title (session label) |
-| Concurrent sessions | One active session per user at a time |
+| Dimension | Decision                                 |
+|---|------------------------------------------|
+| Leaderboard metric | Total cumulative reading time            |
+| Identity | Username only — no auth, no passwords    |
+| Book entry | Free-text title (session label)          |
+| Concurrent sessions | One active session per user at a time    |
 | Session tracking | Client-side (device clock + local state) |
-| Backend role | Sync & leaderboard storage only |
-| Leaderboard scope | Global |
-| Leaderboard windows | Daily / Weekly / Monthly / All-time |
-| Leaderboard refresh | REST polling (on tab focus + periodic) |
-| Backend framework | Spring Boot (Kotlin) |
-| Database | PostgreSQL |
-| Deployment | Docker Compose (local / self-hosted) |
-| Client UI | Compose Multiplatform (shared UI) |
-| Client targets | Android, iOS, JVM Desktop, WasmJS |
+| Backend role | Sync & leaderboard storage only          |
+| Leaderboard scope | Global                                   |
+| Leaderboard windows | Daily / Weekly / Monthly / All-time      |
+| Leaderboard refresh | REST polling (on tab focus + periodic)   |
+| Backend framework | Spring Boot (Kotlin)                     |
+| Database | PostgreSQL                               |
+| Deployment | Docker Compose (local / self-hosted)     |
+| Client UI | Compose Multiplatform (shared UI)        |
+| Client targets | Android, iOS, JVM Desktop, Web           |
 
 ---
 
@@ -32,7 +32,7 @@ A real-time leaderboard application that tracks how much time users spend readin
 ```
 ┌─────────────────────────────────────────────────────┐
 │                  KMP Client (CMP UI)                 │
-│  Android │ iOS │ JVM Desktop │ WasmJS (browser)     │
+│  Android │ iOS │ JVM Desktop │ Web (browser)     │
 │                                                      │
 │  ┌────────────────────────────────────────────────┐  │
 │  │           commonMain (shared)                  │  │
@@ -105,13 +105,20 @@ book-leaderboard/
 │       │       ├── SessionScreen.kt
 │       │       └── LeaderboardScreen.kt
 │       ├── androidMain/kotlin/
-│       │   └── MainActivity.kt
+│       │   ├── MainActivity.kt
+│       │   ├── PrefPathProvider.kt   # points to filesDir
+│       │   └── PrefServiceDataStore.kt
 │       ├── iosMain/kotlin/
-│       │   └── MainViewController.kt
+│       │   ├── MainViewController.kt
+│       │   ├── PrefPathProvider.kt   # points to NSDocumentDirectory
+│       │   └── PrefServiceDataStore.kt
 │       ├── jvmMain/kotlin/
-│       │   └── Main.kt               # Desktop entry
-│       └── wasmJsMain/kotlin/
-│           └── Main.kt               # Browser entry
+│       │   ├── Main.kt               # Desktop entry
+│       │   ├── PrefPathProvider.kt   # points to user home dir
+│       │   └── PrefServiceDataStore.kt
+│       └── webMain/kotlin/
+│           ├── Main.kt               # Browser entry
+│           └── PrefServiceLocalStorage.kt  # window.localStorage interop
 │
 ├── shared-dto/                       # Pure Kotlin/JVM — shared API models
 │   ├── build.gradle.kts
@@ -141,15 +148,16 @@ book-leaderboard/
 | Runtime | JVM 21 (virtual threads) |
 
 ### Client (KMP)
-| Layer | Technology |
-|---|---|
-| Language | Kotlin 2.x Multiplatform |
-| UI | Compose Multiplatform |
-| HTTP | Ktor Client (CIO engine on JVM/WasmJS, Darwin on iOS) |
-| Serialization | kotlinx.serialization |
-| Async | Kotlin Coroutines + Flow |
-| DI | Koin Multiplatform |
-| Navigation | Compose Navigation (multiplatform) |
+| Layer | Technology                                                                         |
+|---|------------------------------------------------------------------------------------|
+| Language | Kotlin 2.x Multiplatform                                                           |
+| UI | Compose Multiplatform                                                              |
+| HTTP | Ktor Client (CIO engine on JVM/Web, Darwin on iOS)                                 |
+| Serialization | kotlinx.serialization                                                              |
+| Async | Kotlin Coroutines + Flow                                                           |
+| DI | Koin Multiplatform                                                                 |
+| Navigation | Compose Navigation (multiplatform)                                                 |
+| Local storage | `androidx.datastore.core.okio` (Android / iOS / JVM) · `window.localStorage` (Web) |
 
 ### Infrastructure
 | Component | Technology |
@@ -320,9 +328,11 @@ volumes:
 - [x] Integration tests (Testcontainers + PostgreSQL)
 
 ### Phase 2 — KMP Client Scaffold
-- [ ] `client` module with all 4 targets (android, iosArm64/iosX64, jvm, wasmJs)
+- [ ] `client` module with all 4 targets (android, iosArm64/iosX64, jvm, Web)
 - [ ] Ktor HTTP client wired to backend
-- [ ] `expect/actual` local storage interface (SharedPreferences / NSUserDefaults / Preferences / localStorage)
+- [ ] Platform storage service interface (`LocalStorageService`) with Koin-injected implementations:
+  - `androidMain` / `iosMain` / `jvmMain`: `PrefServiceDataStore` backed by `androidx.datastore.core.okio` (`OkioStorage` + JSON serializer + platform `PrefPathProvider`)
+  - `webMain`: `PrefServiceLocalStorage` backed by `window.localStorage` (JS interop)
 - [ ] `LocalSessionStore` — persists active session state (clientId, bookTitle, startedAt epoch, elapsed offset) across app restarts
 - [ ] `SessionSyncService` — fires `POST /sessions/sync`; retries on failure; schedules periodic 30 s sync while active
 - [ ] `UserRepository`, `SessionRepository` (client-side), `LeaderboardRepository` (client-side)
@@ -338,7 +348,7 @@ volumes:
 - [ ] Android `MainActivity`
 - [ ] iOS `MainViewController` + Xcode project skeleton
 - [ ] JVM Desktop `main()` with `singleWindowApplication`
-- [ ] WasmJS `main()` with `CanvasBasedWindow`
+- [ ] Web `main()` with `CanvasBasedWindow`
 
 ### Phase 5 — Polish & Packaging
 - [ ] Dockerfile for backend (`./gradlew bootJar` → slim JRE image)
@@ -362,7 +372,7 @@ volumes:
 
 **Leaderboard polling** — the client polls `GET /leaderboard` when the leaderboard tab becomes visible and every 30 s while it remains on screen. No persistent connection is required; results are accurate to within the polling interval (same as the session sync interval).
 
-**Username as identity** — username is stored in a Kotlin `StateFlow` in the client ViewModel and persisted to platform-specific local storage (`SharedPreferences` on Android, `NSUserDefaults` on iOS, `Preferences` on JVM, `localStorage` on WasmJS) via a thin `expect/actual` interface.
+**Username as identity** — username is stored in a Kotlin `StateFlow` in the client ViewModel and persisted via `LocalStorageService`. On Android, iOS, and JVM, the implementation uses `androidx.datastore.core.okio` (`DataStoreFactory` + `OkioStorage` + JSON serializer); each platform supplies a `PrefPathProvider` (via Koin) pointing to the appropriate files directory. On Web, the implementation writes directly to `window.localStorage` via JS interop. No `expect/actual` is needed — Koin platform modules wire the concrete class.
 
 **Active session persistence** — the current active session (clientId, bookTitle, startedAt, elapsed offset) is persisted to local storage so a device restart or app kill resumes the in-progress session correctly without data loss.
 
