@@ -6,8 +6,10 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.springframework.http.MediaType
 import java.time.Instant
-import java.util.UUID
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
 class SessionControllerTest : BaseIntegrationTest() {
     data class CreateUserRequest(
         val username: String,
@@ -22,13 +24,13 @@ class SessionControllerTest : BaseIntegrationTest() {
             .exchange { _, _ -> }
     }
 
-    private fun uniqueUser() = "user_${UUID.randomUUID().toString().take(8)}"
+    private fun uniqueUser() = "user_${Uuid.generateV7().toString().take(8)}"
 
     @Test
     fun `sync creates new session and returns 200`() {
         val username = uniqueUser()
         createUser(username)
-        val clientId = UUID.randomUUID().toString()
+        val clientId = Uuid.generateV7().toString()
         val request =
             SessionSyncRequest(
                 clientId = clientId,
@@ -56,7 +58,7 @@ class SessionControllerTest : BaseIntegrationTest() {
     fun `sync updates existing session duration`() {
         val username = uniqueUser()
         createUser(username)
-        val clientId = UUID.randomUUID().toString()
+        val clientId = Uuid.generateV7().toString()
         val startedAt = Instant.now().toString()
         val initial = SessionSyncRequest(clientId, username, "Foundation", startedAt, null, 30)
         client()
@@ -82,7 +84,7 @@ class SessionControllerTest : BaseIntegrationTest() {
     fun `sync with endedAt marks session as ended`() {
         val username = uniqueUser()
         createUser(username)
-        val clientId = UUID.randomUUID().toString()
+        val clientId = Uuid.generateV7().toString()
         val startedAt = Instant.now().toString()
         val initial = SessionSyncRequest(clientId, username, "Dune", startedAt, null, 0)
         client()
@@ -109,7 +111,7 @@ class SessionControllerTest : BaseIntegrationTest() {
     fun `get session by clientId returns 200`() {
         val username = uniqueUser()
         createUser(username)
-        val clientId = UUID.randomUUID().toString()
+        val clientId = Uuid.generateV7().toString()
         val request = SessionSyncRequest(clientId, username, "Neuromancer", Instant.now().toString(), null, 0)
         client()
             .post()
@@ -126,7 +128,7 @@ class SessionControllerTest : BaseIntegrationTest() {
 
     @Test
     fun `get session with unknown clientId returns 404`() {
-        client().get().uri("/api/v1/sessions/${UUID.randomUUID()}").exchange { _, response ->
+        client().get().uri("/api/v1/sessions/${Uuid.generateV7()}").exchange { _, response ->
             assertThat(response.statusCode.value()).isEqualTo(404)
         }
     }
@@ -135,8 +137,8 @@ class SessionControllerTest : BaseIntegrationTest() {
     fun `sync with unknown user returns 404`() {
         val request =
             SessionSyncRequest(
-                clientId = UUID.randomUUID().toString(),
-                username = "ghost_${UUID.randomUUID()}",
+                clientId = Uuid.generateV7().toString(),
+                username = "ghost_${Uuid.generateV7()}",
                 bookTitle = "Book",
                 startedAt = Instant.now().toString(),
                 endedAt = null,

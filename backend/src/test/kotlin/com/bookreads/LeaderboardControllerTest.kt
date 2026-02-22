@@ -7,8 +7,10 @@ import org.junit.jupiter.api.Test
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.http.MediaType
 import java.time.Instant
-import java.util.UUID
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
+@OptIn(ExperimentalUuidApi::class)
 class LeaderboardControllerTest : BaseIntegrationTest() {
     data class CreateUserRequest(
         val username: String,
@@ -23,7 +25,7 @@ class LeaderboardControllerTest : BaseIntegrationTest() {
             .exchange { _, _ -> }
     }
 
-    private fun uniqueUser() = "lb_${UUID.randomUUID().toString().take(8)}"
+    private fun uniqueUser() = "lb_${Uuid.generateV7().toString().take(8)}"
 
     @Test
     fun `leaderboard default window returns 200`() {
@@ -66,7 +68,7 @@ class LeaderboardControllerTest : BaseIntegrationTest() {
         createUser(username)
         val syncRequest =
             SessionSyncRequest(
-                clientId = UUID.randomUUID().toString(),
+                clientId = Uuid.generateV7().toString(),
                 username = username,
                 bookTitle = "Dune",
                 startedAt = Instant.now().toString(),
