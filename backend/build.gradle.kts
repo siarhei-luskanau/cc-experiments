@@ -8,24 +8,22 @@ plugins {
 
 group = "com.bookreads"
 
-java {
-    toolchain {
-        languageVersion =
-            JavaLanguageVersion.of(
-                libs.versions.javaVersion
-                    .get()
-                    .toInt(),
-            )
-    }
-}
-
 kotlin {
+    jvmToolchain(
+        libs.versions.javaVersion
+            .get()
+            .toInt(),
+    )
     compilerOptions {
-        freeCompilerArgs.addAll("-Xjsr305=strict")
+        freeCompilerArgs.addAll(
+            "-Xexplicit-backing-fields",
+            "-Xjsr305=strict",
+        )
     }
 }
 
 dependencies {
+    developmentOnly("org.springframework.boot:spring-boot-docker-compose")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.flywaydb:flyway-core")
     implementation("org.flywaydb:flyway-database-postgresql")
@@ -46,4 +44,8 @@ dependencies {
 
 tasks.withType<Test> {
     useJUnitPlatform()
+}
+
+tasks.named<org.springframework.boot.gradle.tasks.bundling.BootJar>("bootJar") {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }

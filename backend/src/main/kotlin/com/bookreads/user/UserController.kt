@@ -33,6 +33,7 @@ class UserController(
     fun handleBadRequest(ex: IllegalArgumentException): ResponseEntity<Map<String, String>> =
         ResponseEntity.badRequest().body(mapOf("error" to (ex.message ?: "Bad request")))
 
+    @Suppress("UnusedParameter")
     @ExceptionHandler(NoSuchElementException::class)
     fun handleNotFound(ex: NoSuchElementException): ResponseEntity<Map<String, String>> =
         ResponseEntity.notFound().build()

@@ -15,17 +15,5 @@ services:
       timeout: 5s
       retries: 5
 
-  backend:
-    build: ./backend
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/bookreads
-      SPRING_DATASOURCE_USERNAME: bookreads
-      SPRING_DATASOURCE_PASSWORD: bookreads
-    ports:
-      - "8080:8080"
-
 volumes:
   pgdata:

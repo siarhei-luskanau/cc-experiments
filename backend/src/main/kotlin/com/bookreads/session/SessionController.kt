@@ -29,6 +29,7 @@ class SessionController(
         return if (session != null) ResponseEntity.ok(session) else ResponseEntity.notFound().build()
     }
 
+    @Suppress("MagicNumber")
     @ExceptionHandler(NoSuchElementException::class)
     fun handleNotFound(ex: NoSuchElementException): ResponseEntity<Map<String, String>> =
         ResponseEntity.status(404).body(mapOf("error" to (ex.message ?: "Not found")))
