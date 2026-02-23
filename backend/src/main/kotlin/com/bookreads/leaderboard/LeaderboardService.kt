@@ -10,6 +10,7 @@ import java.time.temporal.ChronoUnit
 class LeaderboardService(
     private val leaderboardRepository: LeaderboardRepository,
 ) {
+    @Suppress("MagicNumber")
     @Transactional(readOnly = true)
     fun getLeaderboard(window: String): List<LeaderboardEntryDto> {
         val windowStart =
