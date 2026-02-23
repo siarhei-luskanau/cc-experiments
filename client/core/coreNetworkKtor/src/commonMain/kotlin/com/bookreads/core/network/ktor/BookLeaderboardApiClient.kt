@@ -16,7 +16,9 @@ import io.ktor.http.contentType
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
 
-internal class BookLeaderboardApiClient {
+internal class BookLeaderboardApiClient(
+    private val baseUrl: String = DEFAULT_BASE_URL,
+) {
     private val httpClient: HttpClient by lazy {
         HttpClient {
             install(ContentNegotiation) {
@@ -27,30 +29,30 @@ internal class BookLeaderboardApiClient {
 
     internal suspend fun registerOrGetUser(username: String): UserDto =
         httpClient
-            .post("$BASE_URL/users") {
+            .post("$baseUrl/users") {
                 contentType(ContentType.Application.Json)
                 setBody(UserRequestDto(username = username))
             }.body()
 
-    internal suspend fun getUser(username: String): UserDto = httpClient.get("$BASE_URL/users/$username").body()
+    internal suspend fun getUser(username: String): UserDto = httpClient.get("$baseUrl/users/$username").body()
 
     internal suspend fun syncSession(request: SessionSyncRequest): SessionDto =
         httpClient
-            .post("$BASE_URL/sessions/sync") {
+            .post("$baseUrl/sessions/sync") {
                 contentType(ContentType.Application.Json)
                 setBody(request)
             }.body()
 
     internal suspend fun getSession(clientId: String): SessionDto? =
-        httpClient.get("$BASE_URL/sessions/$clientId").body()
+        httpClient.get("$baseUrl/sessions/$clientId").body()
 
     internal suspend fun getLeaderboard(window: String): List<LeaderboardEntryDto> =
         httpClient
-            .get("$BASE_URL/leaderboard") {
+            .get("$baseUrl/leaderboard") {
                 url { parameters.append("window", window) }
             }.body()
 
     companion object {
-        private const val BASE_URL = "http://localhost:8080/api/v1"
+        internal const val DEFAULT_BASE_URL = "http://localhost:8080/api/v1"
     }
 }

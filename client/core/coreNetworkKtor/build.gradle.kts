@@ -35,5 +35,18 @@ kotlin {
         wasmJsMain.dependencies {
             implementation(libs.ktor.client.js.wasm.js)
         }
+
+        jvmTest.dependencies {
+            implementation(project.dependencies.platform(libs.spring.boot.dependencies))
+            implementation(project(":backend"))
+            implementation("org.springframework.boot:spring-boot-starter-test")
+            implementation("org.testcontainers:testcontainers-postgresql")
+            implementation(libs.kotlinx.coroutines.test)
+            runtimeOnly("org.junit.platform:junit-platform-launcher")
+        }
     }
+}
+
+tasks.named<Test>("jvmTest") {
+    useJUnitPlatform()
 }
