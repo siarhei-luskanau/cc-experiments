@@ -334,15 +334,15 @@ volumes:
 - [x] Web `main()` with `CanvasBasedWindow`
 
 ### Phase 3 — KMP Client Scaffold
-- [ ] `client` module with all 4 targets (android, iosArm64/iosX64, jvm, Web)
-- [ ] Ktor HTTP client wired to backend
+- [x] `client` module with all 4 targets (android, iosArm64/iosX64, jvm, Web)
+- [x] Ktor HTTP client wired to backend
 - [ ] Platform storage service interface (`LocalStorageService`) with Koin-injected implementations:
-  - `androidMain` / `iosMain` / `jvmMain`: `PrefServiceDataStore` backed by `androidx.datastore.core.okio` (`OkioStorage` + JSON serializer + platform `PrefPathProvider`)
-  - `webMain`: `PrefServiceLocalStorage` backed by `window.localStorage` (JS interop)
+  - `androidMain` / `iosMain` / `jvmMain`: `PrefServiceDataStore` backed by `androidx.datastore.core.okio` (`OkioStorage` + JSON serializer + platform `PrefPathProvider`) ✓
+  - `webMain`: `PrefServiceLocalStorage` backed by `window.localStorage` (JS interop) — currently `PrefServiceMemory` (in-memory stub)
 - [ ] `LocalSessionStore` — persists active session state (clientId, bookTitle, startedAt epoch, elapsed offset) across app restarts
 - [ ] `SessionSyncService` — fires `POST /sessions/sync`; retries on failure; schedules periodic 30 s sync while active
 - [ ] `UserRepository`, `SessionRepository` (client-side), `LeaderboardRepository` (client-side)
-- [ ] Koin modules
+- [x] Koin modules
 
 ### Phase 4 — Compose Multiplatform UI
 - [ ] `HomeScreen` with username entry
