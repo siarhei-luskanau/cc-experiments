@@ -327,7 +327,13 @@ volumes:
 - [x] `LeaderboardController` + `LeaderboardService` (4 time windows, `SUM(duration_sec)`)
 - [x] Integration tests (Testcontainers + PostgreSQL)
 
-### Phase 2 — KMP Client Scaffold
+### Phase 2 — Platform Entry Points ✓
+- [x] Android `MainActivity`
+- [x] iOS `MainViewController` + Xcode project skeleton
+- [x] JVM Desktop `main()` with `singleWindowApplication`
+- [x] Web `main()` with `CanvasBasedWindow`
+
+### Phase 3 — KMP Client Scaffold
 - [ ] `client` module with all 4 targets (android, iosArm64/iosX64, jvm, Web)
 - [ ] Ktor HTTP client wired to backend
 - [ ] Platform storage service interface (`LocalStorageService`) with Koin-injected implementations:
@@ -338,17 +344,11 @@ volumes:
 - [ ] `UserRepository`, `SessionRepository` (client-side), `LeaderboardRepository` (client-side)
 - [ ] Koin modules
 
-### Phase 3 — Compose Multiplatform UI
+### Phase 4 — Compose Multiplatform UI
 - [ ] `HomeScreen` with username entry
 - [ ] `SessionScreen`: device-local timer via `LaunchedEffect` coroutine ticking every second; start generates clientId + fires first sync; stop fires final sync; timer survives recomposition via `StateFlow`
 - [ ] `LeaderboardScreen` with 4-tab view; polls `GET /leaderboard` on tab focus and every 30 s while visible
 - [ ] Navigation between screens
-
-### Phase 4 — Platform Entry Points
-- [ ] Android `MainActivity`
-- [ ] iOS `MainViewController` + Xcode project skeleton
-- [ ] JVM Desktop `main()` with `singleWindowApplication`
-- [ ] Web `main()` with `CanvasBasedWindow`
 
 ### Phase 5 — Polish & Packaging
 - [ ] Dockerfile for backend (`./gradlew bootJar` → slim JRE image)

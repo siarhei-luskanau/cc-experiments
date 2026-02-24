@@ -49,4 +49,5 @@ kotlin {
 
 tasks.named<Test>("jvmTest") {
     useJUnitPlatform()
+    maxParallelForks = 1
 }
