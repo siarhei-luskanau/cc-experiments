@@ -10,6 +10,10 @@ kotlin {
             implementation(libs.kotlinx.serialization.json)
         }
 
+        commonTest.dependencies {
+            implementation(libs.kotlinx.coroutines.test)
+        }
+
         jvmMain.dependencies {
             implementation(libs.androidx.datastore.core.okio)
         }
@@ -20,6 +24,10 @@ kotlin {
 
         iosMain.dependencies {
             implementation(libs.androidx.datastore.core.okio)
+        }
+
+        webMain.dependencies {
+            implementation(libs.kotlinx.browser)
         }
     }
 }

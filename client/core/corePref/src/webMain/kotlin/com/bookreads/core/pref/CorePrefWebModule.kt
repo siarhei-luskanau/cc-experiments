@@ -4,5 +4,5 @@ import org.koin.dsl.module
 
 actual val corePrefModule =
     module {
-        single<PrefService> { PrefServiceMemory() }
+        single<PrefService> { PrefServiceLocalStorage() }
     }
