@@ -14,13 +14,13 @@ import org.koin.dsl.module
 
 @Preview
 @Composable
-fun KoinApp() =
+fun KoinApp(platformModule: Module = appPlatformModule) =
     KoinMultiplatformApplication(
         config =
             KoinConfiguration {
                 modules(
                     appModule,
-                    appPlatformModule,
+                    platformModule,
                     coreCommonModule,
                     corePrefModule,
                 )
@@ -38,6 +38,8 @@ val appModule by lazy {
             MainViewModel(
                 initArg = it[0],
                 navigationCallback = it[1],
+                dispatcherSet = get(),
+                prefService = get(),
             )
         }
     }
