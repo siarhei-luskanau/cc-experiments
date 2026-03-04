@@ -1,18 +1,17 @@
 [versions]
-agp = "9.0.1"
+agp = "9.1.0"
 androidx-activity = "1.12.4"
 androidx-datastore = "1.2.0"
-androidx-uiTest = "1.10.3"
+androidx-uiTest = "1.10.4"
 build-android-compileSdk = "36"
 build-android-minSdk = "30"
 build-android-targetSdk = "36"
-compose-multiplatform = "1.10.1"
+compose-multiplatform = "1.11.0-alpha03"
 detekt = "1.23.8"
 detekt2 = "2.0.0-alpha.2"
 javaVersion = "21"
-jetbrains-compose-material3 = "1.11.0-alpha02"
 jetbrains-lifecycle = "2.10.0-alpha08"
-jetbrains-navigation3 = "1.1.0-alpha02"
+jetbrains-navigation3 = "1.1.0-alpha03"
 jetbrains-savedstate = "1.4.0"
 jetbrains-window = "1.5.1"
 koin-bom = "4.1.1"
@@ -39,7 +38,7 @@ jetbrains-compose-animation-graphics = { module = "org.jetbrains.compose.animati
 jetbrains-compose-compiler-plugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 jetbrains-compose-components-resources = { module = "org.jetbrains.compose.components:components-resources", version.ref = "compose-multiplatform" }
 jetbrains-compose-foundation = { module = "org.jetbrains.compose.foundation:foundation", version.ref = "compose-multiplatform" }
-jetbrains-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "jetbrains-compose-material3" }
+jetbrains-compose-material3 = { module = "org.jetbrains.compose.material3:material3", version.ref = "compose-multiplatform" }
 jetbrains-compose-plugin = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose-multiplatform" }
 jetbrains-compose-runtime = { module = "org.jetbrains.compose.runtime:runtime", version.ref = "compose-multiplatform" }
 jetbrains-compose-ui = { module = "org.jetbrains.compose.ui:ui", version.ref = "compose-multiplatform" }
