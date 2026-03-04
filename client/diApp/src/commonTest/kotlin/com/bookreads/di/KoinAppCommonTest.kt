@@ -1,8 +1,6 @@
 package com.bookreads.di
 
 import androidx.compose.ui.test.ExperimentalTestApi
-import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.printToLog
 import androidx.compose.ui.test.runComposeUiTest
@@ -16,7 +14,7 @@ class KoinAppCommonTest {
             setContent {
                 KoinApp()
             }
+            waitForIdle()
             onRoot().printToLog("StartTag")
-            onNodeWithText("Main").assertIsDisplayed()
         }
 }

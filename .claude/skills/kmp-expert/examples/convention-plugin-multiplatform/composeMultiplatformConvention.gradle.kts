@@ -21,7 +21,7 @@ kotlin {
         freeCompilerArgs.add("-Xexplicit-backing-fields")
     }
 
-    androidLibrary {
+    android {
         compileSdk =
             libs.versions.build.android.compileSdk
                 .get()

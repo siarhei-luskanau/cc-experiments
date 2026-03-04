@@ -2,4 +2,4 @@ plugins {
     id("composeMultiplatformConvention")
 }
 
-kotlin.androidLibrary.namespace = "com.bookreads.core.network.api"
+kotlin.android.namespace = "com.bookreads.core.network.api"

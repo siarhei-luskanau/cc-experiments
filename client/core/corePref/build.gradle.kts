@@ -4,7 +4,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary.namespace = "com.bookreads.core.pref"
+    android.namespace = "com.bookreads.core.pref"
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.json)

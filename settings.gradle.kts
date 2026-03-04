@@ -14,7 +14,10 @@ include(
     ":client:diApp",
     ":client:navigation",
     ":client:ui:uiCommon",
+    ":client:ui:uiHome",
+    ":client:ui:uiLeaderboard",
     ":client:ui:uiMain",
+    ":client:ui:uiSession",
     ":client:ui:uiSplash",
     ":shared-dto",
 )

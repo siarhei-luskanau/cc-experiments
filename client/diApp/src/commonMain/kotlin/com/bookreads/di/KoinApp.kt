@@ -7,7 +7,9 @@ import com.bookreads.core.data.coreDataModule
 import com.bookreads.core.network.coreNetworkModule
 import com.bookreads.core.pref.corePrefModule
 import com.bookreads.navigation.NavApp
-import com.bookreads.ui.main.MainViewModel
+import com.bookreads.ui.home.HomeViewModel
+import com.bookreads.ui.leaderboard.LeaderboardViewModel
+import com.bookreads.ui.session.SessionViewModel
 import com.bookreads.ui.splash.SplashViewModel
 import org.koin.compose.KoinMultiplatformApplication
 import org.koin.core.module.Module
@@ -37,13 +39,36 @@ expect val appPlatformModule: Module
 
 val appModule by lazy {
     module {
-        factory { SplashViewModel(navigationCallback = it[0]) }
         factory {
-            MainViewModel(
-                initArg = it[0],
-                navigationCallback = it[1],
-                dispatcherSet = get(),
+            SplashViewModel(
+                navigationCallback = it[0],
                 prefService = get(),
+                dispatcherSet = get(),
+            )
+        }
+        factory {
+            HomeViewModel(
+                navigationCallback = it[0],
+                prefService = get(),
+                localSessionStore = get(),
+                dispatcherSet = get(),
+            )
+        }
+        factory {
+            SessionViewModel(
+                navigationCallback = it[0],
+                prefService = get(),
+                localSessionStore = get(),
+                sessionSyncService = get(),
+                dispatcherSet = get(),
+            )
+        }
+        factory {
+            LeaderboardViewModel(
+                navigationCallback = it[0],
+                leaderboardRepository = get(),
+                prefService = get(),
+                dispatcherSet = get(),
             )
         }
     }

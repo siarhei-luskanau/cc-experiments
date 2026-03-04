@@ -344,11 +344,11 @@ volumes:
 - [x] `UserRepository`, `SessionRepository` (client-side), `LeaderboardRepository` (client-side)
 - [x] Koin modules
 
-### Phase 4 — Compose Multiplatform UI
-- [ ] `HomeScreen` with username entry
-- [ ] `SessionScreen`: device-local timer via `LaunchedEffect` coroutine ticking every second; start generates clientId + fires first sync; stop fires final sync; timer survives recomposition via `StateFlow`
-- [ ] `LeaderboardScreen` with 4-tab view; polls `GET /leaderboard` on tab focus and every 30 s while visible
-- [ ] Navigation between screens
+### Phase 4 — Compose Multiplatform UI ✓
+- [x] `HomeScreen` with username entry
+- [x] `SessionScreen`: device-local timer via `LaunchedEffect` coroutine ticking every second; start generates clientId + fires first sync; stop fires final sync; timer survives recomposition via `StateFlow`
+- [x] `LeaderboardScreen` with 4-tab view; polls `GET /leaderboard` on tab focus and every 30 s while visible
+- [x] Navigation between screens
 
 ### Phase 5 — Polish & Packaging
 - [ ] Dockerfile for backend (`./gradlew bootJar` → slim JRE image)
