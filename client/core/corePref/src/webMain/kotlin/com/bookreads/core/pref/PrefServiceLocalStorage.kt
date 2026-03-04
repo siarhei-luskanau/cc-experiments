@@ -34,4 +34,12 @@ internal class PrefServiceLocalStorage : PrefService {
         localStorage.setItem(PREF_STORAGE_KEY, storageJson.encodeToString(PrefData.serializer(), newPrefData))
         prefFlow.emit(newPrefData)
     }
+
+    override fun getSessionJson(): Flow<String?> = prefFlow.map { it.session }
+
+    override suspend fun setSessionJson(json: String?) {
+        val newPrefData = prefFlow.first().copy(session = json)
+        localStorage.setItem(PREF_STORAGE_KEY, storageJson.encodeToString(PrefData.serializer(), newPrefData))
+        prefFlow.emit(newPrefData)
+    }
 }

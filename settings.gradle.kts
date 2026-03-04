@@ -6,6 +6,7 @@ include(
     ":client:app:desktopApp",
     ":client:app:webApp",
     ":client:core:coreCommon",
+    ":client:core:coreData",
     ":client:core:coreNetworkApi",
     ":client:core:coreNetworkKtor",
     ":client:core:coreNetworkStub",

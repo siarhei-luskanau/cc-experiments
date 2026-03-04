@@ -5,4 +5,5 @@ import org.koin.dsl.module
 actual val corePrefModule =
     module {
         single<PrefService> { PrefServiceLocalStorage() }
+        single<LocalSessionStore> { LocalSessionStoreImpl(get()) }
     }

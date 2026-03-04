@@ -3,6 +3,8 @@ package com.bookreads.di
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
 import com.bookreads.core.common.coreCommonModule
+import com.bookreads.core.data.coreDataModule
+import com.bookreads.core.network.coreNetworkModule
 import com.bookreads.core.pref.corePrefModule
 import com.bookreads.navigation.NavApp
 import com.bookreads.ui.main.MainViewModel
@@ -23,6 +25,8 @@ fun KoinApp(platformModule: Module = appPlatformModule) =
                     platformModule,
                     coreCommonModule,
                     corePrefModule,
+                    coreNetworkModule,
+                    coreDataModule,
                 )
             },
     ) {
