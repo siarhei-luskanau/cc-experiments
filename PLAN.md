@@ -339,9 +339,9 @@ volumes:
 - [x] Platform storage service interface (`LocalStorageService`) with Koin-injected implementations:
   - `androidMain` / `iosMain` / `jvmMain`: `PrefServiceDataStore` backed by `androidx.datastore.core.okio` (`OkioStorage` + JSON serializer + platform `PrefPathProvider`) ✓
   - `webMain`: `PrefServiceLocalStorage` backed by `window.localStorage` (JS interop) ✓
-- [ ] `LocalSessionStore` — persists active session state (clientId, bookTitle, startedAt epoch, elapsed offset) across app restarts
-- [ ] `SessionSyncService` — fires `POST /sessions/sync`; retries on failure; schedules periodic 30 s sync while active
-- [ ] `UserRepository`, `SessionRepository` (client-side), `LeaderboardRepository` (client-side)
+- [x] `LocalSessionStore` — persists active session state (clientId, bookTitle, startedAt epoch, elapsed offset) across app restarts
+- [x] `SessionSyncService` — fires `POST /sessions/sync`; retries on failure; schedules periodic 30 s sync while active
+- [x] `UserRepository`, `SessionRepository` (client-side), `LeaderboardRepository` (client-side)
 - [x] Koin modules
 
 ### Phase 4 — Compose Multiplatform UI

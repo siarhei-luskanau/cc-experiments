@@ -6,4 +6,5 @@ actual val corePrefModule =
     module {
         single { PrefSerializer() }
         single<PrefService> { PrefServiceDataStore(prefPathProvider = get()) }
+        single<LocalSessionStore> { LocalSessionStoreImpl(get()) }
     }

@@ -9,6 +9,8 @@ kotlin {
         commonMain.dependencies {
             implementation(projects.client.core.coreCommon)
             implementation(projects.client.core.corePref)
+            implementation(projects.client.core.coreNetworkKtor)
+            implementation(projects.client.core.coreData)
             implementation(projects.client.navigation)
             implementation(projects.client.ui.uiMain)
             implementation(projects.client.ui.uiSplash)

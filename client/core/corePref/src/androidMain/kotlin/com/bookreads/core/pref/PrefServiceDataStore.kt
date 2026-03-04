@@ -34,6 +34,12 @@ internal class PrefServiceDataStore(
         updateDataStore { it.copy(key = key) }
     }
 
+    override fun getSessionJson(): Flow<String?> = getFlowFromDataStore { it.session }
+
+    override suspend fun setSessionJson(json: String?) {
+        updateDataStore { it.copy(session = json) }
+    }
+
     private fun <T : Any> getFlowFromDataStore(mapData: (PrefData) -> T?): Flow<T?> = dataStore.data.map { mapData(it) }
 
     private suspend fun updateDataStore(update: (PrefData) -> PrefData) {

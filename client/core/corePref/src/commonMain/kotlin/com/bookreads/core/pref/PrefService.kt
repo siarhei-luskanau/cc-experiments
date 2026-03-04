@@ -8,4 +8,8 @@ interface PrefService {
     fun getKey(): Flow<String?>
 
     suspend fun setKey(key: String?)
+
+    fun getSessionJson(): Flow<String?>
+
+    suspend fun setSessionJson(json: String?)
 }
