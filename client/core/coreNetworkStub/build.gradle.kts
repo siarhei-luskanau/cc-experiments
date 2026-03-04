@@ -3,7 +3,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary.namespace = "com.bookreads.core.network.stub"
+    android.namespace = "com.bookreads.core.network.stub"
 
     sourceSets {
         commonMain.dependencies {

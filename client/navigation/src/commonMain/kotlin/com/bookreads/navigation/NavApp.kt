@@ -7,7 +7,9 @@ import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.bookreads.ui.common.theme.AppTheme
-import com.bookreads.ui.main.MainScreen
+import com.bookreads.ui.home.HomeScreen
+import com.bookreads.ui.leaderboard.LeaderboardScreen
+import com.bookreads.ui.session.SessionScreen
 import com.bookreads.ui.splash.SplashScreen
 import kotlinx.serialization.Serializable
 import org.koin.compose.getKoin
@@ -30,9 +32,19 @@ fun NavApp() =
                             koin.get { parametersOf(appNavigation) }
                         }
                     }
-                    entry<AppRoutes.Main> {
-                        MainScreen {
-                            koin.get { parametersOf(it.initArg, appNavigation) }
+                    entry<AppRoutes.Home> {
+                        HomeScreen {
+                            koin.get { parametersOf(appNavigation) }
+                        }
+                    }
+                    entry<AppRoutes.Session> {
+                        SessionScreen {
+                            koin.get { parametersOf(appNavigation) }
+                        }
+                    }
+                    entry<AppRoutes.Leaderboard> {
+                        LeaderboardScreen {
+                            koin.get { parametersOf(appNavigation) }
                         }
                     }
                 },
@@ -44,7 +56,11 @@ internal sealed interface AppRoutes : NavKey {
     data object Splash : AppRoutes
 
     @Serializable
-    data class Main(
-        val initArg: String,
-    ) : AppRoutes
+    data object Home : AppRoutes
+
+    @Serializable
+    data object Session : AppRoutes
+
+    @Serializable
+    data object Leaderboard : AppRoutes
 }

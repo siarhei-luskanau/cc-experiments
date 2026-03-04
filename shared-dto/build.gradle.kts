@@ -6,7 +6,7 @@ plugins {
 group = "com.bookreads"
 
 kotlin {
-    androidLibrary.namespace = "com.bookreads.dto"
+    android.namespace = "com.bookreads.dto"
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.json)

@@ -2,4 +2,4 @@ plugins {
     id("composeMultiplatformConvention")
 }
 
-kotlin.androidLibrary.namespace = "com.bookreads.core.common"
+kotlin.android.namespace = "com.bookreads.core.common"

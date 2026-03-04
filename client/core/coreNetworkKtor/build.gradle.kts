@@ -4,7 +4,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary.namespace = "com.bookreads.core.network.ktor"
+    android.namespace = "com.bookreads.core.network.ktor"
 
     sourceSets {
         commonMain.dependencies {
@@ -37,11 +37,11 @@ kotlin {
         }
 
         jvmTest.dependencies {
-            implementation(project.dependencies.platform(libs.spring.boot.dependencies))
-            implementation(project(":backend"))
             implementation("org.springframework.boot:spring-boot-starter-test")
             implementation("org.testcontainers:testcontainers-postgresql")
             implementation(libs.kotlinx.coroutines.test)
+            implementation(project(":backend"))
+            implementation(project.dependencies.platform(libs.spring.boot.dependencies))
             runtimeOnly("org.junit.platform:junit-platform-launcher")
         }
     }

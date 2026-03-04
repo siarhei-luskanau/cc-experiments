@@ -4,7 +4,7 @@ plugins {
 }
 
 kotlin {
-    androidLibrary.namespace = "com.bookreads.ui.main"
+    android.namespace = "com.bookreads.ui.main"
     sourceSets {
         commonMain.dependencies {
             implementation(projects.client.core.coreCommon)
