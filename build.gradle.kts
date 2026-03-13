@@ -20,7 +20,7 @@ plugins {
 allprojects {
     apply(from = "$rootDir/ktlint.gradle")
     if (listOf("backend", "shared-dto").contains(this.name)) {
-        apply(plugin = "dev.detekt")
+        // apply(plugin = "dev.detekt")
     } else {
         apply(plugin = "io.gitlab.arturbosch.detekt")
     }

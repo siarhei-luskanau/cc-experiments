@@ -1,9 +1,0 @@
-package com.bookreads.core.pref
-
-import org.koin.dsl.module
-
-actual val corePrefModule =
-    module {
-        single<PrefService> { PrefServiceLocalStorage() }
-        single<LocalSessionStore> { LocalSessionStoreImpl(get()) }
-    }

@@ -1,11 +1,12 @@
 package com.bookreads.di
 
-import com.bookreads.core.pref.PrefPathProvider
+import androidx.datastore.core.okio.OkioStorage
+import com.bookreads.core.pref.StorageProvider
 import kotlinx.cinterop.BetaInteropApi
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.ObjCClass
 import kotlinx.cinterop.getOriginalKotlinClass
-import okio.Path
+import okio.FileSystem
 import okio.Path.Companion.toPath
 import org.koin.core.Koin
 import org.koin.core.module.Module
@@ -19,7 +20,7 @@ import platform.Foundation.NSUserDomainMask
 @OptIn(ExperimentalForeignApi::class)
 actual val appPlatformModule: Module =
     module {
-        single<PrefPathProvider> {
+        single<StorageProvider> {
             val file =
                 NSFileManager.defaultManager
                     .URLForDirectory(
@@ -29,10 +30,17 @@ actual val appPlatformModule: Module =
                         create = false,
                         error = null,
                     )?.path +
-                    Path.DIRECTORY_SEPARATOR +
+                    okio.Path.DIRECTORY_SEPARATOR +
                     "app.pref.json"
-            object : PrefPathProvider {
-                override fun get(): Path = file.toPath()
+            object : StorageProvider {
+                override fun <T> getStorage(
+                    serializer: androidx.datastore.core.okio.OkioSerializer<T>,
+                ): androidx.datastore.core.Storage<T> =
+                    OkioStorage(
+                        fileSystem = FileSystem.SYSTEM,
+                        serializer = serializer,
+                        producePath = { file.toPath() },
+                    )
             }
         }
     }

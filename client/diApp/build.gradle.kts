@@ -16,9 +16,6 @@ kotlin {
             implementation(projects.client.ui.uiLeaderboard)
             implementation(projects.client.ui.uiSession)
             implementation(projects.client.ui.uiSplash)
-        }
-
-        jvmMain.dependencies {
             implementation(libs.androidx.datastore.core.okio)
         }
 
@@ -26,18 +23,10 @@ kotlin {
             implementation(libs.roborazzi.compose.desktop)
         }
 
-        androidMain.dependencies {
-            implementation(libs.androidx.datastore.core.okio)
-        }
-
         androidHostTest.dependencies {
             implementation(libs.robolectric)
             implementation(libs.roborazzi)
             implementation(libs.roborazzi.compose)
-        }
-
-        iosMain.dependencies {
-            implementation(libs.androidx.datastore.core.okio)
         }
 
         iosTest.dependencies {
