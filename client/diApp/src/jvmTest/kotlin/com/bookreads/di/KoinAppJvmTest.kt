@@ -3,8 +3,10 @@ package com.bookreads.di
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onRoot
 import androidx.compose.ui.test.runDesktopComposeUiTest
-import com.bookreads.core.pref.PrefPathProvider
+import androidx.datastore.core.okio.OkioStorage
+import com.bookreads.core.pref.StorageProvider
 import io.github.takahirom.roborazzi.captureRoboImage
+import okio.FileSystem
 import okio.Path.Companion.toPath
 import org.koin.dsl.module
 import java.nio.file.Files
@@ -14,11 +16,18 @@ import kotlin.test.Test
 class KoinAppJvmTest {
     private val testPlatformModule =
         module {
-            single<PrefPathProvider> {
+            single<StorageProvider> {
                 val tempFile = Files.createTempFile("test.jvm.screenshot", ".app.pref.json").toFile()
                 tempFile.deleteOnExit()
-                object : PrefPathProvider {
-                    override fun get() = tempFile.absolutePath.toPath()
+                object : StorageProvider {
+                    override fun <T> getStorage(
+                        serializer: androidx.datastore.core.okio.OkioSerializer<T>,
+                    ): androidx.datastore.core.Storage<T> =
+                        OkioStorage(
+                            fileSystem = FileSystem.SYSTEM,
+                            serializer = serializer,
+                            producePath = { tempFile.absolutePath.toPath() },
+                        )
                 }
             }
         }

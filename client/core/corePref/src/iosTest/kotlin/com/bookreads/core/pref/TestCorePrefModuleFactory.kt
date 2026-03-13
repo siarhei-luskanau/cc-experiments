@@ -1,6 +1,8 @@
 package com.bookreads.core.pref
 
+import androidx.datastore.core.okio.OkioStorage
 import kotlinx.cinterop.ExperimentalForeignApi
+import okio.FileSystem
 import okio.Path.Companion.toPath
 import org.koin.dsl.module
 import platform.Foundation.NSFileManager
@@ -13,9 +15,16 @@ private val TEST_PREF_PATH = NSTemporaryDirectory() + "test.app.pref.json"
 actual fun testPrefModule() =
     module {
         includes(corePrefModule)
-        single<PrefPathProvider> {
-            object : PrefPathProvider {
-                override fun get() = TEST_PREF_PATH.toPath()
+        single<StorageProvider> {
+            object : StorageProvider {
+                override fun <T> getStorage(
+                    serializer: androidx.datastore.core.okio.OkioSerializer<T>,
+                ): androidx.datastore.core.Storage<T> =
+                    OkioStorage(
+                        fileSystem = FileSystem.SYSTEM,
+                        serializer = serializer,
+                        producePath = { TEST_PREF_PATH.toPath() },
+                    )
             }
         }
     }

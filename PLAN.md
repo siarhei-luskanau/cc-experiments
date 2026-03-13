@@ -105,20 +105,13 @@ book-leaderboard/
 │       │       ├── SessionScreen.kt
 │       │       └── LeaderboardScreen.kt
 │       ├── androidMain/kotlin/
-│       │   ├── MainActivity.kt
-│       │   ├── PrefPathProvider.kt   # points to filesDir
-│       │   └── PrefServiceDataStore.kt
+│       │   └── MainActivity.kt
 │       ├── iosMain/kotlin/
-│       │   ├── MainViewController.kt
-│       │   ├── PrefPathProvider.kt   # points to NSDocumentDirectory
-│       │   └── PrefServiceDataStore.kt
+│       │   └── MainViewController.kt
 │       ├── jvmMain/kotlin/
-│       │   ├── Main.kt               # Desktop entry
-│       │   ├── PrefPathProvider.kt   # points to user home dir
-│       │   └── PrefServiceDataStore.kt
+│       │   └── Main.kt               # Desktop entry
 │       └── webMain/kotlin/
-│           ├── Main.kt               # Browser entry
-│           └── PrefServiceLocalStorage.kt  # window.localStorage interop
+│           └── Main.kt               # Browser entry
 │
 ├── shared-dto/                       # Pure Kotlin/JVM — shared API models
 │   ├── build.gradle.kts
@@ -337,8 +330,8 @@ volumes:
 - [x] `client` module with all 4 targets (android, iosArm64/iosX64, jvm, Web)
 - [x] Ktor HTTP client wired to backend
 - [x] Platform storage service interface (`LocalStorageService`) with Koin-injected implementations:
-  - `androidMain` / `iosMain` / `jvmMain`: `PrefServiceDataStore` backed by `androidx.datastore.core.okio` (`OkioStorage` + JSON serializer + platform `PrefPathProvider`) ✓
-  - `webMain`: `PrefServiceLocalStorage` backed by `window.localStorage` (JS interop) ✓
+  - All platforms: `PrefServiceDataStore` backed by `androidx.datastore.core.okio` (`OkioStorage` + JSON serializer + platform `StorageProvider`) ✓
+  - Web uses `WebStorage` (localStorage) via `StorageProvider`; no separate implementation needed ✓
 - [x] `LocalSessionStore` — persists active session state (clientId, bookTitle, startedAt epoch, elapsed offset) across app restarts
 - [x] `SessionSyncService` — fires `POST /sessions/sync`; retries on failure; schedules periodic 30 s sync while active
 - [x] `UserRepository`, `SessionRepository` (client-side), `LeaderboardRepository` (client-side)
@@ -372,7 +365,7 @@ volumes:
 
 **Leaderboard polling** — the client polls `GET /leaderboard` when the leaderboard tab becomes visible and every 30 s while it remains on screen. No persistent connection is required; results are accurate to within the polling interval (same as the session sync interval).
 
-**Username as identity** — username is stored in a Kotlin `StateFlow` in the client ViewModel and persisted via `LocalStorageService`. On Android, iOS, and JVM, the implementation uses `androidx.datastore.core.okio` (`DataStoreFactory` + `OkioStorage` + JSON serializer); each platform supplies a `PrefPathProvider` (via Koin) pointing to the appropriate files directory. On Web, the implementation writes directly to `window.localStorage` via JS interop. No `expect/actual` is needed — Koin platform modules wire the concrete class.
+**Username as identity** — username is stored in a Kotlin `StateFlow` in the client ViewModel and persisted via `LocalStorageService`. All platforms use `androidx.datastore.core.okio` (`DataStoreFactory` + `OkioStorage`/`WebStorage` + JSON serializer); each platform supplies a `StorageProvider` (via Koin) that constructs the appropriate `Storage<T>` — file-backed on Android/iOS/JVM, `localStorage`-backed on Web. No `expect/actual` is needed — Koin platform modules wire the concrete class.
 
 **Active session persistence** — the current active session (clientId, bookTitle, startedAt, elapsed offset) is persisted to local storage so a device restart or app kill resumes the in-progress session correctly without data loss.
 

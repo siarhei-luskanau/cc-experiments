@@ -8,26 +8,11 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(libs.kotlinx.serialization.json)
+            implementation(libs.androidx.datastore.core.okio)
         }
 
         commonTest.dependencies {
             implementation(libs.kotlinx.coroutines.test)
-        }
-
-        jvmMain.dependencies {
-            implementation(libs.androidx.datastore.core.okio)
-        }
-
-        androidMain.dependencies {
-            implementation(libs.androidx.datastore.core.okio)
-        }
-
-        iosMain.dependencies {
-            implementation(libs.androidx.datastore.core.okio)
-        }
-
-        webMain.dependencies {
-            implementation(libs.kotlinx.browser)
         }
     }
 }
