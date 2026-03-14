@@ -2,6 +2,7 @@ package com.bookreads.ui.session
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.bookreads.core.common.CoreResult
 import com.bookreads.core.common.DispatcherSet
 import com.bookreads.core.data.SessionSyncService
 import com.bookreads.core.pref.ActiveSession
@@ -36,18 +37,30 @@ class SessionViewModel(
         viewModelScope.launch(dispatcherSet.defaultDispatcher()) {
             val username = prefService.getKey().first() ?: ""
             val activeSession = localSessionStore.observe().first()
-            if (activeSession != null) {
-                elapsedSec = activeSession.elapsedOffsetSec
-                viewState.value =
-                    SessionViewState.Reading(
-                        username = username,
-                        bookTitle = activeSession.bookTitle,
-                        elapsedSec = elapsedSec,
-                    )
-                startTimerLoop()
-                sessionSyncService.startPeriodicSync(viewModelScope) { elapsedSec }
-            } else {
-                viewState.value = SessionViewState.Idle(username = username)
+            when {
+                activeSession?.pendingStop != null -> {
+                    viewState.value = SessionViewState.Idle(username = username)
+                    val result = sessionSyncService.retryPendingStop()
+                    if (result is CoreResult.Success) {
+                        localSessionStore.clear()
+                    }
+                }
+
+                activeSession != null -> {
+                    elapsedSec = activeSession.elapsedOffsetSec
+                    viewState.value =
+                        SessionViewState.Reading(
+                            username = username,
+                            bookTitle = activeSession.bookTitle,
+                            elapsedSec = elapsedSec,
+                        )
+                    startTimerLoop()
+                    sessionSyncService.startPeriodicSync(viewModelScope) { elapsedSec }
+                }
+
+                else -> {
+                    viewState.value = SessionViewState.Idle(username = username)
+                }
             }
         }
     }
@@ -124,7 +137,13 @@ class SessionViewModel(
                     bookTitle = bookTitle,
                     elapsedSec = 0L,
                 )
-            sessionSyncService.syncOnce(durationSec = 0L)
+            val syncResult = sessionSyncService.syncOnce(durationSec = 0L)
+            if (syncResult is CoreResult.Failure) {
+                val current = viewState.value
+                if (current is SessionViewState.Reading) {
+                    viewState.value = current.copy(syncError = true)
+                }
+            }
             startTimerLoop()
             sessionSyncService.startPeriodicSync(viewModelScope) { elapsedSec }
         }
@@ -140,8 +159,12 @@ class SessionViewModel(
             val finalElapsed = elapsedSec
             val endedAt = Clock.System.now().toString()
             viewModelScope.launch(dispatcherSet.defaultDispatcher()) {
-                sessionSyncService.syncOnce(durationSec = finalElapsed, endedAt = endedAt)
-                localSessionStore.clear()
+                val result = sessionSyncService.syncOnce(durationSec = finalElapsed, endedAt = endedAt)
+                if (result is CoreResult.Failure) {
+                    localSessionStore.updatePendingStop(finalElapsed, endedAt)
+                } else {
+                    localSessionStore.clear()
+                }
                 viewState.value = SessionViewState.Idle(username = current.username)
             }
         }

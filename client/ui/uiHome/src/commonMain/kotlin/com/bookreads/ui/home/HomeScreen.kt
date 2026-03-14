@@ -65,6 +65,14 @@ internal fun HomeContent(
                             modifier = Modifier.padding(bottom = 8.dp),
                         )
                     }
+                    if (state.error != null) {
+                        Text(
+                            text = state.error,
+                            color = MaterialTheme.colorScheme.error,
+                            style = MaterialTheme.typography.bodySmall,
+                            modifier = Modifier.padding(bottom = 8.dp),
+                        )
+                    }
                     OutlinedTextField(
                         value = state.username,
                         onValueChange = { onEvent(HomeViewEvent.UsernameChanged(it)) },
@@ -77,7 +85,7 @@ internal fun HomeContent(
                     )
                     Button(
                         onClick = { onEvent(HomeViewEvent.EnterPressed) },
-                        enabled = state.username.isNotBlank(),
+                        enabled = state.username.isNotBlank() && !state.isLoading,
                         modifier = Modifier.fillMaxWidth(),
                     ) {
                         Text("Enter")

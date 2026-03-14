@@ -144,6 +144,13 @@ private fun ReadingContent(
         text = formatElapsed(state.elapsedSec),
         style = MaterialTheme.typography.displayMedium,
     )
+    if (state.syncError) {
+        Text(
+            text = "Sync error — will retry",
+            color = MaterialTheme.colorScheme.error,
+            style = MaterialTheme.typography.bodySmall,
+        )
+    }
     Button(
         onClick = { onEvent(SessionViewEvent.StopReading) },
         modifier = Modifier.fillMaxWidth(),

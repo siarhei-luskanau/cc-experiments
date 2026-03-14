@@ -1,6 +1,7 @@
 package com.bookreads.core.pref
 
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.serialization.json.Json
 
@@ -26,5 +27,13 @@ internal class LocalSessionStoreImpl(
 
     override suspend fun clear() {
         prefService.setSessionJson(null)
+    }
+
+    override suspend fun updatePendingStop(
+        durationSec: Long,
+        endedAt: String,
+    ) {
+        val current = observe().first() ?: return
+        save(current.copy(pendingStop = PendingStop(endedAt = endedAt, durationSec = durationSec)))
     }
 }

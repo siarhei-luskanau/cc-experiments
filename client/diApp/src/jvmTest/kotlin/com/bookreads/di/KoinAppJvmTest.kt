@@ -38,6 +38,8 @@ class KoinAppJvmTest {
             setContent {
                 KoinApp(platformModule = testPlatformModule)
             }
+            waitForIdle()
+            waitForIdle()
             onRoot().captureRoboImage()
         }
 }
