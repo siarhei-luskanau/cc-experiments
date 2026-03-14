@@ -52,6 +52,25 @@ class SessionSyncService(
             }
     }
 
+    suspend fun retryPendingStop(): CoreResult<SessionModel> {
+        val active =
+            sessionStore.observe().first()
+                ?: return CoreResult.Failure(IllegalStateException("No active session"))
+        val pending =
+            active.pendingStop
+                ?: return CoreResult.Failure(IllegalStateException("No pending stop"))
+        return syncWithRetry(
+            SessionSyncModel(
+                clientId = active.clientId,
+                username = active.username,
+                bookTitle = active.bookTitle,
+                startedAt = active.startedAt,
+                endedAt = pending.endedAt,
+                durationSec = pending.durationSec,
+            ),
+        )
+    }
+
     fun stopPeriodicSync() {
         periodicSyncJob?.cancel()
         periodicSyncJob = null

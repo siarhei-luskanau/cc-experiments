@@ -16,5 +16,6 @@ sealed interface SessionViewState {
         val username: String,
         val bookTitle: String,
         val elapsedSec: Long,
+        val syncError: Boolean = false,
     ) : SessionViewState
 }

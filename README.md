@@ -1,5 +1,7 @@
 # book-leaderboard
 
+A real-time leaderboard that tracks reading time. Users pick a username, start/stop reading sessions (tagged with a book title), and compete on a shared global leaderboard across daily, weekly, monthly, and all-time windows.
+
 ### Backend
 Run the desktop application: `./gradlew :backend:bootRun`  
 Run the desktop **hot reload** application: `./gradlew :backend:assemble :backend:build :backend:test`

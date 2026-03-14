@@ -51,6 +51,7 @@ val appModule by lazy {
                 navigationCallback = it[0],
                 prefService = get(),
                 localSessionStore = get(),
+                userRepository = get(),
                 dispatcherSet = get(),
             )
         }

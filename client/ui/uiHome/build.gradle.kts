@@ -8,6 +8,8 @@ kotlin {
     sourceSets {
         commonMain.dependencies {
             implementation(projects.client.core.coreCommon)
+            implementation(projects.client.core.coreData)
+            implementation(projects.client.core.coreNetworkApi)
             implementation(projects.client.core.corePref)
             implementation(projects.client.ui.uiCommon)
         }
