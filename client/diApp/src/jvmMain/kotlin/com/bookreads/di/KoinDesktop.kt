@@ -15,12 +15,19 @@ actual val appPlatformModule: Module =
                 override fun <T> getStorage(
                     serializer: androidx.datastore.core.okio.OkioSerializer<T>,
                 ): androidx.datastore.core.Storage<T> {
-                    val dir = File(System.getProperty("user.home"), ".bookreads")
-                    dir.mkdirs()
+                    val storageFile =
+                        File(
+                            listOf(
+                                System.getProperty("user.home"),
+                                ".bookreads",
+                                "datastore",
+                                "app.pref.json",
+                            ).joinToString(separator = File.separator),
+                        ).also { it.parentFile?.mkdirs() }
                     return OkioStorage(
                         fileSystem = FileSystem.SYSTEM,
                         serializer = serializer,
-                        producePath = { File(dir, "app.pref.json").absolutePath.toPath() },
+                        producePath = { storageFile.absolutePath.toPath() },
                     )
                 }
             }
