@@ -19,9 +19,9 @@ class HomeScreenAndroidTest {
     @Test
     fun preview() =
         runComposeUiTest {
-            setContent {
-                HomeScreenPreview()
-            }
+            setContent { HomeScreenPreview() }
+            waitForIdle()
+            awaitIdle()
             onRoot().captureRoboImage()
         }
 }

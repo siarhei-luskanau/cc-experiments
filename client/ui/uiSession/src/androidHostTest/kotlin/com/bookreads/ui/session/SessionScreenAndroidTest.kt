@@ -19,18 +19,18 @@ class SessionScreenAndroidTest {
     @Test
     fun previewIdle() =
         runComposeUiTest {
-            setContent {
-                SessionScreenIdlePreview()
-            }
+            setContent { SessionScreenIdlePreview() }
+            waitForIdle()
+            awaitIdle()
             onRoot().captureRoboImage()
         }
 
     @Test
     fun previewReading() =
         runComposeUiTest {
-            setContent {
-                SessionScreenReadingPreview()
-            }
+            setContent { SessionScreenReadingPreview() }
+            waitForIdle()
+            awaitIdle()
             onRoot().captureRoboImage()
         }
 }
