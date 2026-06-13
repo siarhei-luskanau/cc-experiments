@@ -19,9 +19,9 @@ class LeaderboardScreenAndroidTest {
     @Test
     fun preview() =
         runComposeUiTest {
-            setContent {
-                LeaderboardScreenPreview()
-            }
+            setContent { LeaderboardScreenPreview() }
+            waitForIdle()
+            awaitIdle()
             onRoot().captureRoboImage()
         }
 }

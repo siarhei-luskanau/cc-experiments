@@ -11,7 +11,7 @@ import com.bookreads.ui.home.HomeViewModel
 import com.bookreads.ui.leaderboard.LeaderboardViewModel
 import com.bookreads.ui.session.SessionViewModel
 import com.bookreads.ui.splash.SplashViewModel
-import org.koin.compose.KoinMultiplatformApplication
+import org.koin.compose.KoinApplication
 import org.koin.core.module.Module
 import org.koin.dsl.KoinConfiguration
 import org.koin.dsl.module
@@ -19,8 +19,8 @@ import org.koin.dsl.module
 @Preview
 @Composable
 fun KoinApp(platformModule: Module = appPlatformModule) =
-    KoinMultiplatformApplication(
-        config =
+    KoinApplication(
+        configuration =
             KoinConfiguration {
                 modules(
                     appModule,

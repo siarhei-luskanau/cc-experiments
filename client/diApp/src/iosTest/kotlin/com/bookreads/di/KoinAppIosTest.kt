@@ -2,7 +2,7 @@ package com.bookreads.di
 
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.onRoot
-import androidx.compose.ui.test.runComposeUiTest
+import androidx.compose.ui.test.v2.runComposeUiTest
 import androidx.datastore.core.okio.OkioStorage
 import com.bookreads.core.pref.StorageProvider
 import com.github.takahirom.roborazzi.ExperimentalRoborazziApi
@@ -36,9 +36,9 @@ class KoinAppIosTest {
     @Test
     fun preview() =
         runComposeUiTest {
-            setContent {
-                KoinApp(platformModule = testPlatformModule)
-            }
+            setContent { KoinApp(platformModule = testPlatformModule) }
+            waitForIdle()
+            awaitIdle()
             onRoot().captureRoboImage(this, filePath = "com.bookreads.di.KoinAppIosTest.preview.png")
         }
 }
