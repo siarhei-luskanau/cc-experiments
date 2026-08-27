@@ -37,6 +37,7 @@ jobs:
 
 
   backend-build:
+    needs: Lint
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -50,6 +51,7 @@ jobs:
 
 
   Tests:
+    needs: [ Android, Desktop, Web, iOS, backend-build ]
     runs-on: ${{ matrix.os }}
     continue-on-error: ${{ matrix.experimental }}
     strategy:
@@ -112,6 +114,7 @@ jobs:
 
 
   VerifyScreenshotMatrixSetup:
+    needs: [ Android, Desktop, Web, iOS ]
     runs-on: ubuntu-latest
     outputs:
       matrix: ${{ steps.matrix.outputs.matrix }}
@@ -158,6 +161,7 @@ jobs:
 
 
   Android:
+    needs: Lint
     runs-on: ubuntu-latest
     steps:
 
@@ -175,6 +179,7 @@ jobs:
 
 
   Desktop:
+    needs: Lint
     runs-on: ubuntu-latest
     steps:
 
@@ -192,6 +197,7 @@ jobs:
 
 
   Web:
+    needs: Lint
     runs-on: ubuntu-latest
     steps:
 
@@ -211,6 +217,7 @@ jobs:
 
 
   iOS:
+    needs: Lint
     runs-on: macOS-26
     steps:
 
