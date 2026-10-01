@@ -15,10 +15,7 @@ kotlin {
             .toInt(),
     )
     compilerOptions {
-        freeCompilerArgs.addAll(
-            "-Xexplicit-backing-fields",
-            "-Xjsr305=strict",
-        )
+        freeCompilerArgs.addAll("-Xjsr305=strict")
     }
 }
 

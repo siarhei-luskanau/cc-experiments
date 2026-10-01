@@ -14,7 +14,7 @@ import kotlin.test.Test
 
 @GraphicsMode(GraphicsMode.Mode.NATIVE)
 @RunWith(RobolectricTestRunner::class)
-@Config(sdk = [36], qualifiers = RobolectricDeviceQualifiers.SmallPhone)
+@Config(sdk = [37], qualifiers = RobolectricDeviceQualifiers.SmallPhone)
 @OptIn(ExperimentalTestApi::class)
 class KoinAppAndroidTest {
     @Test

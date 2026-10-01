@@ -17,10 +17,6 @@ kotlin {
             .toInt(),
     )
 
-    compilerOptions {
-        freeCompilerArgs.add("-Xexplicit-backing-fields")
-    }
-
     android {
         compileSdk =
             libs.versions.build.android.compileSdk
@@ -91,6 +87,7 @@ kotlin {
         getByName("androidHostTest") {
             dependencies {
                 implementation(kotlin("test"))
+                implementation(libs.androidx.test.espresso.core)
                 implementation(libs.androidx.uitest.junit4)
                 implementation(libs.androidx.uitest.testManifest)
             }
@@ -118,6 +115,18 @@ kotlin {
 
 tasks.withType<Test>().matching { it.name.contains("AndroidHostTest") }.configureEach {
     exclude("**/*CommonTest*")
+    jvmArgs(
+        "--add-opens=java.base/java.lang=ALL-UNNAMED",
+        "--add-opens=java.base/java.util=ALL-UNNAMED",
+        "--add-opens=java.base/java.io=ALL-UNNAMED",
+        "--add-opens=java.base/java.net=ALL-UNNAMED",
+        "--add-opens=java.base/java.security=ALL-UNNAMED",
+        "--add-opens=java.base/java.text=ALL-UNNAMED",
+        "--add-opens=java.base/java.util.concurrent.atomic=ALL-UNNAMED",
+        "--add-opens=java.base/jdk.internal.access=ALL-UNNAMED",
+        "--add-opens=java.base/jdk.internal.util.random=ALL-UNNAMED",
+        "--add-opens=java.desktop/java.awt.font=ALL-UNNAMED",
+    )
 }
 
 tasks.withType<AbstractTestTask>().configureEach {
