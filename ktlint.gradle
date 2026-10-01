@@ -2,6 +2,23 @@ configurations {
     ktlint
 }
 
+pluginManager.withPlugin("io.spring.dependency-management") {
+    dependencyManagement {
+        configurations(project.configurations.ktlint) {
+            dependencies {
+                dependencySet(group: "org.jetbrains.kotlin", version: "2.2.21") {
+                    entry "kotlin-compiler-embeddable"
+                    entry "kotlin-daemon-embeddable"
+                    entry "kotlin-reflect"
+                    entry "kotlin-script-runtime"
+                    entry "kotlin-stdlib"
+                    entry "kotlin-stdlib-common"
+                }
+            }
+        }
+    }
+}
+
 dependencies {
     ktlint(libs.ktlint.cli) {
         attributes {
